@@ -40,7 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.habitstakes.app.data.model.StakeStatus
-import com.habitstakes.app.data.model.Habit
 import com.habitstakes.app.data.model.HabitWithStats
 import com.habitstakes.app.data.model.StakeType
 
@@ -95,8 +94,8 @@ fun HabitCard(
     onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    val habitModel = habit.habit
-    val stakeColor = stakeTypeColor(habitModel.stakeType)
+    val stakeColor = stakeTypeColor(habit.stakeType)
+    val successRate = if (habit.totalCount > 0) habit.verifiedCount.toDouble() / habit.totalCount else 0.0
 
     Card(
         modifier = modifier
@@ -125,14 +124,14 @@ fun HabitCard(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = habitModel.title,
+                        text = habit.title,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (habitModel.description.isNotBlank()) {
+                    if (habit.description.isNotBlank()) {
                         Text(
-                            text = habitModel.description,
+                            text = habit.description,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -141,7 +140,7 @@ fun HabitCard(
                     }
                 }
                 StakeStatusChip(
-                    status = if (habitModel.currentStreak > 0) StakeStatus.HELD else StakeStatus.PENDING,
+                    status = if (habit.currentStreak > 0) StakeStatus.HELD else StakeStatus.PENDING,
                     showIcon = false
                 )
             }
@@ -155,20 +154,20 @@ fun HabitCard(
             ) {
                 StatPill(
                     label = "Streak",
-                    value = "${habitModel.currentStreak}",
+                    value = "${habit.currentStreak}",
                     icon = Icons.Default.LocalFireDepartment,
                     color = Color(0xFFFF6B35)
                 )
                 StatPill(
                     label = "Success",
-                    value = "${(habit.successRate * 100).toInt()}%",
+                    value = "${(successRate * 100).toInt()}%",
                     icon = Icons.Default.CheckCircle,
                     color = Color(0xFF2E7D32)
                 )
                 StatPill(
                     label = "Stake",
-                    value = formatStake(habitModel),
-                    icon = stakeTypeIcon(habitModel.stakeType),
+                    value = formatStake(habit),
+                    icon = stakeTypeIcon(habit.stakeType),
                     color = stakeColor
                 )
             }
@@ -182,12 +181,12 @@ fun HabitCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Reminder: ${habitModel.reminderTime}",
+                    text = "Reminder: ${habit.reminderTime}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = habitModel.frequency.displayName,
+                    text = habit.frequency.displayName,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -255,7 +254,7 @@ private fun stakeTypeIcon(type: StakeType) = when (type) {
     StakeType.COMBO -> Icons.Default.AutoAwesome
 }
 
-private fun formatStake(habit: Habit): String = when (habit.stakeType) {
+private fun formatStake(habit: HabitWithStats): String = when (habit.stakeType) {
     StakeType.MONEY -> "$${(habit.stakeAmount / 100).toInt()}"
     StakeType.TIME -> "${habit.stakeAmount.toInt()}min"
     else -> habit.stakeType.displayName

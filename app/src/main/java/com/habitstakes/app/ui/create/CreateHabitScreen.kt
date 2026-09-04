@@ -1,49 +1,65 @@
 package com.habitstakes.app.ui.create
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.Timelapse
+import androidx.compose.material.icons.filled.ScreenshotMonitor
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.habitstakes.app.data.model.Frequency
 import com.habitstakes.app.data.model.ProofType
 import com.habitstakes.app.data.model.StakeType
-import com.habitstakes.app.ui.theme.HabitStakesTheme
 import com.habitstakes.app.ui.theme.SurfaceContainer
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateHabitScreen(
     viewModel: CreateHabitViewModel = hiltViewModel(),
@@ -62,10 +78,9 @@ fun CreateHabitScreen(
     val tags by viewModel.tags.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    androidx.compose.material3.Scaffold(
+    Scaffold(
         topBar = {
-            androidx.compose.material3.TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
+            TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -79,7 +94,7 @@ fun CreateHabitScreen(
                         }
                     }
                 },
-                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
@@ -89,14 +104,16 @@ fun CreateHabitScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(top = 8.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Title field
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Habit Title", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     TextField(
                         value = title,
                         onValueChange = { viewModel.updateTitle(it) },
@@ -107,11 +124,13 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Description
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Description (optional)", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     TextField(
                         value = description,
                         onValueChange = { viewModel.updateDescription(it) },
@@ -124,11 +143,13 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Stake Type Selector
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Stake Type", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -144,34 +165,37 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Stake Amount (only for money stake)
             if (stakeType == StakeType.MONEY) {
                 SurfaceContainer {
-                    Column {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Text("Stake Amount (USD)", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         TextField(
                             value = stakeAmount,
                             onValueChange = { viewModel.updateStakeAmount(it) },
                             placeholder = { Text("e.g., 10.00") },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
-                            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             leadingIcon = { Text("\$", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 16.dp)) }
                         )
-                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text("You'll forfeit this amount if you don't complete the habit", 
                             style = MaterialTheme.typography.bodySmall, 
                             color = MaterialTheme.colorScheme.error)
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Frequency
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Frequency", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -187,11 +211,13 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Reminder Time
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Reminder Time", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     TimePickerField(
                         time = reminderTime,
                         onTimeChange = { viewModel.updateReminderTime(it) }
@@ -199,11 +225,13 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Proof Type
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Proof Type", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -219,42 +247,46 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Advanced options
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Advanced", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     // Grace period
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text("Grace Period", style = MaterialTheme.typography.bodyMedium)
-                            Text("${gracePeriod} minutes after reminder", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${gracePeriod} min after reminder", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        androidx.compose.material3.Slider(
+                        Slider(
                             value = gracePeriod.toFloat(),
                             onValueChange = { viewModel.updateGracePeriod(it.toInt()) },
                             valueRange = 0f..120f,
                             steps = 12,
-                            modifier = Modifier.width(200.dp)
+                            modifier = Modifier.width(150.dp)
                         )
                     }
 
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Auto-verify
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
                             Text("Auto-Verify", style = MaterialTheme.typography.bodyMedium)
-                            Text("Automatically approve submissions (AI)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("AI-based verification", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        androidx.compose.material3.Switch(
+                        Switch(
                             checked = autoVerify,
                             onCheckedChange = { viewModel.updateAutoVerify(it) }
                         )
@@ -262,11 +294,13 @@ fun CreateHabitScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Tags
             SurfaceContainer {
-                Column {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text("Tags (comma-separated)", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     TextField(
                         value = tags,
                         onValueChange = { viewModel.updateTags(it) },
@@ -278,26 +312,28 @@ fun CreateHabitScreen(
             }
 
             // Create button
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { 
                     val id = viewModel.createHabit()
-                    id?.let { onHabitCreated(it) }
+                    // Create button doesn't return ID directly due to async, 
+                    // it's handled via uiState.createdHabitId above.
                 },
-                modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 enabled = uiState.isValid,
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = if (uiState.isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Text("Create Habit", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimary)
+                Text("Create Habit", style = MaterialTheme.typography.labelLarge)
             }
 
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StakeTypeChip(
     type: StakeType,
@@ -313,10 +349,8 @@ fun StakeTypeChip(
 
     Card(
         modifier = Modifier
-            .weight(1f)
-            .height(100.dp)
-            .fillMaxWidth()
-            .padding(8.dp),
+            .height(90.dp)
+            .width(80.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) color.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surface,
@@ -326,7 +360,7 @@ fun StakeTypeChip(
         elevation = CardDefaults.cardElevation(defaultElevation = if (selected) 4.dp else 1.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -339,15 +373,15 @@ fun StakeTypeChip(
                 },
                 contentDescription = null,
                 tint = if (selected) color else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(24.dp)
             )
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
-            Text(type.displayName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            Text(type.description, style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.TextAlign.Center, maxLines = 2)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(type.displayName, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FrequencyChip(
     frequency: Frequency,
@@ -356,10 +390,8 @@ fun FrequencyChip(
 ) {
     Card(
         modifier = Modifier
-            .weight(1f)
-            .height(72.dp)
-            .fillMaxWidth()
-            .padding(8.dp),
+            .height(56.dp)
+            .width(80.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
@@ -368,15 +400,16 @@ fun FrequencyChip(
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(frequency.displayName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(frequency.displayName, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProofTypeChip(
     type: ProofType,
@@ -385,10 +418,8 @@ fun ProofTypeChip(
 ) {
     Card(
         modifier = Modifier
-            .weight(1f)
-            .height(72.dp)
-            .fillMaxWidth()
-            .padding(8.dp),
+            .height(64.dp)
+            .width(80.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface,
@@ -397,7 +428,7 @@ fun ProofTypeChip(
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -413,10 +444,10 @@ fun ProofTypeChip(
                 },
                 contentDescription = null,
                 tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(4.dp))
-            Text(type.displayName, style = MaterialTheme.typography.labelSmall, textAlign = androidx.compose.ui.text.TextAlign.Center)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(type.displayName, style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
         }
     }
 }
@@ -426,21 +457,19 @@ fun TimePickerField(
     time: String,
     onTimeChange: (String) -> Unit
 ) {
-    // Simple time input - in production would use TimePickerDialog
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        androidx.compose.material3.OutlinedTextField(
+        TextField(
             value = time,
             onValueChange = onTimeChange,
             label = { Text("HH:MM") },
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+            modifier = Modifier.weight(1f),
             singleLine = true,
-            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        Text("24h format", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.CenterVertically))
+        Text("24h format", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

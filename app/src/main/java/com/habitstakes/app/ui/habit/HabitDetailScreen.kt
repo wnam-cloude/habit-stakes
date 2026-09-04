@@ -1,33 +1,46 @@
 package com.habitstakes.app.ui.habit
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Chip
+import androidx.compose.material3.ChipDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.Timelapse
+import androidx.compose.material.icons.filled.ScreenshotMonitor
+import androidx.compose.material.icons.filled.Edit as EditIcon
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,10 +61,10 @@ import com.habitstakes.app.data.model.Stake
 import com.habitstakes.app.data.model.StakeStatus
 import com.habitstakes.app.ui.components.HabitCard
 import com.habitstakes.app.ui.components.StakeStatusChip
-import com.habitstakes.app.ui.theme.HabitStakesTheme
 import com.habitstakes.app.ui.theme.SurfaceContainer
 import kotlinx.coroutines.launch
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun HabitDetailScreen(
     habitId: Long,
@@ -64,7 +78,7 @@ fun HabitDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     habit?.let { h ->
-        androidx.compose.material3.Scaffold(
+        Scaffold(
             topBar = { HabitDetailTopBar(h, onBack, onEdit) },
             floatingActionButton = {
                 if (h.isActive) {
@@ -76,7 +90,7 @@ fun HabitDetailScreen(
                     )
                 }
             },
-            floatingActionButtonPosition = androidx.compose.material3.FabPosition.End
+            floatingActionButtonPosition = FabPosition.End
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -92,13 +106,13 @@ fun HabitDetailScreen(
 
                 // Stakes section
                 if (stakes.isNotEmpty()) {
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     StakesSection(stakes)
                 }
 
                 // Completions history
                 if (completions.isNotEmpty()) {
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     CompletionsSection(completions)
                 }
             }
@@ -112,7 +126,7 @@ fun HabitDetailTopBar(
     onBack: () -> Unit,
     onEdit: (Habit) -> Unit
 ) {
-    androidx.compose.material3.TopAppBar(
+    TopAppBar(
         modifier = Modifier.fillMaxWidth(),
         navigationIcon = {
             IconButton(onClick = onBack) {
@@ -120,14 +134,14 @@ fun HabitDetailTopBar(
             }
         },
         title = {
-            Text(text = habit.title, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = androidx.compose.ui.text.TextOverflow.Ellipsis)
+            Text(text = habit.title, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
         },
         actions = {
             IconButton(onClick = { onEdit(habit) }) {
                 Icon(Icons.Default.Edit, contentDescription = "Edit habit")
             }
         },
-        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface
         )
@@ -137,19 +151,19 @@ fun HabitDetailTopBar(
 @Composable
 fun StakesSection(stakes: List<Stake>) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Stakes", style = MaterialTheme.typography.titleMedium)
             Text("${stakes.size} total", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(stakes) { stake ->
@@ -161,7 +175,6 @@ fun StakesSection(stakes: List<Stake>) {
 
 @Composable
 fun StakeRow(stake: Stake) {
-    val colors = stakeStatusColors(stake.status)
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -186,19 +199,19 @@ fun StakeRow(stake: Stake) {
 @Composable
 fun CompletionsSection(completions: List<Completion>) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("History", style = MaterialTheme.typography.titleMedium)
             Text("${completions.size} entries", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(completions) { completion ->
@@ -236,20 +249,21 @@ fun CompletionRow(completion: Completion) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = if (isForfeit) "Forfeit: ${completion.forfeitReason ?: "No reason"}" 
+                    text = if (isForfeit) "Forfeit: ${completion.forfeitReason ?: "No reason"}"
                            else "Proof: ${completion.proofType.displayName}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(formatDate(completion.submittedAt), style = MaterialTheme.typography.bodySmall)
             }
             if (completion.textNote != null && completion.textNote!!.isNotBlank()) {
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(completion.textNote!!, style = MaterialTheme.typography.bodySmall, color = textColor.copy(alpha = 0.8f))
             }
         }
     }
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun SubmitProofDialog(
     habit: Habit,
@@ -258,7 +272,6 @@ fun SubmitProofDialog(
 ) {
     var proofType by remember { mutableStateOf(habit.proofType) }
     var textNote by remember { mutableStateOf("") }
-    var showCamera by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -266,16 +279,16 @@ fun SubmitProofDialog(
         text = {
             Column(modifier = Modifier.padding(16.dp).fillMaxWidth().widthIn(min = 280.dp)) {
                 Text("Proof Type", style = MaterialTheme.typography.labelMedium)
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     ProofType.values().forEach { type ->
                         val selected = proofType == type
-                        androidx.compose.material3.Chip(
+                        Chip(
                             onClick = { proofType = type },
                             selected = selected,
-                            colors = androidx.compose.material3.ChipDefaults.chipColors(
+                            colors = ChipDefaults.chipColors(
                                 containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
                             )
                         ) {
@@ -283,9 +296,9 @@ fun SubmitProofDialog(
                         }
                     }
                 }
-                if (proofType == com.habitstakes.app.data.model.ProofType.TEXT) {
-                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
-                    androidx.compose.material3.TextField(
+                if (proofType == ProofType.TEXT) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
                         value = textNote,
                         onValueChange = { textNote = it },
                         label = { Text("Notes (optional)") },
@@ -299,11 +312,9 @@ fun SubmitProofDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    // TODO: Handle actual proof capture (camera/gallery)
-                    // For now, just submit with mock URI
                     viewModel.submitCompletion(
                         habit = habit,
-                        proofUri = "mock://proof/${System.currentTimeMillis()}",
+                        proofUri = "mock://proof/\${System.currentTimeMillis()}",
                         proofType = proofType,
                         textNote = textNote.ifBlank { null }
                     )
@@ -325,7 +336,5 @@ private fun showSubmitDialog(habit: Habit, viewModel: HabitDetailViewModel) {
     // This would be called from a proper dialog host in real implementation
 }
 
-private val stakeStatusColors = com.habitstakes.app.ui.components.CommonComponentsKt::statusColors
-private val formatDate = { instant: kotlinx.datetime.Instant ->
+private fun formatDate(instant: kotlinx.datetime.Instant): String =
     instant.toString().substring(0, 16).replace('T', ' ')
-}

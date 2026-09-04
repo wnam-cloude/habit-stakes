@@ -134,7 +134,7 @@ fun HabitCard(
                     }
                 }
                 StakeStatusChip(
-                    status = habitModel.currentStreak > 0 ? StakeStatus.HELD : StakeStatus.PENDING,
+                    status = if (habitModel.currentStreak > 0) StakeStatus.HELD else StakeStatus.PENDING,
                     showIcon = false
                 )
             }

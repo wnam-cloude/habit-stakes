@@ -1,6 +1,7 @@
 package com.habitstakes.app.ui.create
 
 import androidx.hilt.lifecycle.HiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.habitstakes.app.data.model.Frequency
 import com.habitstakes.app.data.model.Habit
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateHabitViewModel @Inject constructor(
     private val habitRepository: HabitRepository
-) : androidx.lifecycle.ViewModel() {
+) : ViewModel() {
 
     // Form state
     private val _title = MutableStateFlow("")
@@ -69,18 +70,19 @@ class CreateHabitViewModel @Inject constructor(
     fun updateTags(value: String) { _tags.value = value }
 
     private fun validate() {
-        val isValid = _title.value.isNotBlank() && 
+        val isValid = _title.value.isNotBlank() &&
             (_stakeType.value != StakeType.MONEY || _stakeAmount.value.toDoubleOrNull() != null && _stakeAmount.value.toDouble() > 0)
         _uiState.update { it.copy(isValid = isValid) }
     }
 
     fun createHabit(): Habit? {
         val amount = _stakeAmount.value.toDoubleOrNull() ?: 0.0
+        val stakeAmountCents = if (_stakeType.value == StakeType.MONEY) (amount * 100).toLong() else 0L
         val habit = Habit(
             title = _title.value.trim(),
             description = _description.value.trim(),
             stakeType = _stakeType.value,
-            stakeAmount = if (_stakeType.value == StakeType.MONEY) (amount * 100).toLong() else amount, // Store as cents
+            stakeAmount = stakeAmountCents,
             frequency = _frequency.value,
             reminderTime = _reminderTime.value,
             proofType = _proofType.value,

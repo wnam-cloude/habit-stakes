@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -19,8 +20,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -48,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.habitstakes.app.data.model.UserProfile
 import com.habitstakes.app.ui.theme.HabitStakesTheme
 import com.habitstakes.app.ui.theme.SurfaceContainer
@@ -62,9 +70,9 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     profile?.let { p ->
-        androidx.compose.material3.Scaffold(
+        Scaffold(
             topBar = {
-                androidx.compose.material3.TopAppBar(
+                TopAppBar(
                     modifier = Modifier.fillMaxWidth(),
                     navigationIcon = {
                         IconButton(onClick = onBack) {
@@ -77,7 +85,7 @@ fun ProfileScreen(
                             Icon(Icons.Default.Settings, contentDescription = "Settings")
                         }
                     },
-                    colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 )
@@ -92,19 +100,19 @@ fun ProfileScreen(
             ) {
                 // Profile header
                 ProfileHeader(p)
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Stats cards
                 StatsGrid(p)
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Settings
                 SettingsSection(viewModel, p)
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Danger zone
                 DangerZone(viewModel, uiState)
-                androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(100.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
@@ -125,24 +133,24 @@ fun ProfileHeader(profile: UserProfile) {
                 profile.avatarUri?.let { uri ->
                     // TODO: Load actual image with Coil
                 }
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(48.dp)
                 )
             }
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Name
             Text(profile.displayName.ifBlank { "Habit Staker" }, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Text(profile.email.ifBlank { "No email set" }, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Member since
             Text("Member since ${formatDate(profile.joinedAt)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Edit name button
             Button(onClick = { /* TODO: Edit name dialog */ }) {
@@ -158,7 +166,7 @@ fun StatsGrid(profile: UserProfile) {
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
     ) {
         Text("Lifetime Stats", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 12.dp))
-        androidx.compose.foundation.layout.Row(
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -180,7 +188,7 @@ fun SettingsSection(viewModel: ProfileViewModel, profile: UserProfile) {
                 title = "Dark Mode",
                 subtitle = "Use dark theme",
                 trailing = {
-                    androidx.compose.material3.Switch(
+                    Switch(
                         checked = profile.darkMode,
                         onCheckedChange = { viewModel.toggleDarkMode(it) }
                     )
@@ -192,7 +200,7 @@ fun SettingsSection(viewModel: ProfileViewModel, profile: UserProfile) {
                 title = "Biometric Lock",
                 subtitle = "Require fingerprint/face to open app",
                 trailing = {
-                    androidx.compose.material3.Switch(
+                    Switch(
                         checked = profile.biometricEnabled,
                         onCheckedChange = { viewModel.toggleBiometric(it) }
                     )
@@ -204,7 +212,7 @@ fun SettingsSection(viewModel: ProfileViewModel, profile: UserProfile) {
                 title = "Notifications",
                 subtitle = "Reminders and updates",
                 trailing = {
-                    androidx.compose.material3.Switch(
+                    Switch(
                         checked = profile.notificationsEnabled,
                         onCheckedChange = { viewModel.toggleNotifications(it) }
                     )
@@ -261,7 +269,7 @@ fun DangerZone(viewModel: ProfileViewModel, uiState: ProfileUiState) {
                 }
                 Button(
                     onClick = { showResetDialog = true },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
@@ -279,7 +287,7 @@ fun DangerZone(viewModel: ProfileViewModel, uiState: ProfileUiState) {
                 Text("This action cannot be undone. All your habits, completions, stakes, and history will be permanently deleted.")
             },
             confirmButton = {
-                Button(onClick = { viewModel.confirmResetStats(); showResetDialog = false }, colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
+                Button(onClick = { viewModel.confirmResetStats(); showResetDialog = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
                     Text("Yes, Delete Everything")
                 }
             },
@@ -292,7 +300,7 @@ fun DangerZone(viewModel: ProfileViewModel, uiState: ProfileUiState) {
     }
 
     if (uiState.statsReset) {
-        androidx.compose.material3.Snackbar(
+        Snackbar(
             modifier = Modifier.fillMaxWidth(),
             action = { Text("Dismiss") },
             dismissAction = {}
@@ -321,7 +329,7 @@ fun StatCard(label: String, value: String, icon: androidx.compose.ui.graphics.ve
             verticalArrangement = Arrangement.Center
         ) {
             Icon(imageVector = icon, contentDescription = null, tint = color, modifier = Modifier.size(28.dp))
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(text = label, style = MaterialTheme.typography.bodySmall)
         }

@@ -2,7 +2,6 @@ package com.habitstakes.app.ui.home
 
 import androidx.hilt.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
-import com.habitstakes.app.data.model.Habit
 import com.habitstakes.app.data.model.HabitWithStats
 import com.habitstakes.app.data.repository.HabitRepository
 import com.habitstakes.app.data.repository.UserProfileRepository
@@ -70,7 +69,7 @@ class HomeViewModel @Inject constructor(
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val currentTime = "${now.hour.toString().padStart(2, '0')}:${now.minute.toString().padStart(2, '0')}"
         return _habits.value.filter { habit ->
-            habit.habit.isActive && habit.habit.reminderTime <= currentTime
+            habit.isActive && habit.reminderTime <= currentTime
         }
     }
 }
@@ -86,7 +85,7 @@ data class HomeUiState(
     }
 
     val activeHabits: List<HabitWithStats>
-        get() = habits.filter { it.habit.isActive }
+        get() = habits.filter { it.isActive }
 
     val totalStaked: Double
         get() = profile?.totalStaked ?: 0.0
@@ -98,5 +97,5 @@ data class HomeUiState(
         get() = profile?.totalForfeited ?: 0.0
 
     val currentStreak: Int
-        get() = habits.maxOfOrNull { it.habit.currentStreak } ?: 0
+        get() = habits.maxOfOrNull { it.currentStreak } ?: 0
 }

@@ -17,8 +17,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Chip
-import androidx.compose.material3.ChipDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -287,15 +287,15 @@ fun SubmitProofDialog(
                 ) {
                     ProofType.values().forEach { type ->
                         val selected = proofType == type
-                        Chip(
-                            onClick = { proofType = type },
+                        FilterChip(
                             selected = selected,
-                            colors = ChipDefaults.chipColors(
-                                containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                            onClick = { proofType = type },
+                            label = { Text(type.displayName) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                                labelColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                        ) {
-                            Text(type.displayName)
-                        }
+                        )
                     }
                 }
                 if (proofType == ProofType.TEXT) {
@@ -335,7 +335,7 @@ fun SubmitProofDialog(
 }
 
 private fun showSubmitDialog(habit: Habit, viewModel: HabitDetailViewModel) {
-    // This would be called from a proper dialog host in real implementation
+    // Placeholder for real dialog host
 }
 
 private fun formatDate(instant: kotlinx.datetime.Instant): String =

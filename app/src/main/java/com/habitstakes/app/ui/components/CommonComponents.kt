@@ -1,42 +1,48 @@
 package com.habitstakes.app.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CloseCircle
-import androidx.compose.material.icons.filled.HelpCircle
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.habitstakes.app.data.model.StakeStatus
-import com.habitstakes.app.ui.theme.HabitStakesTheme
+import com.habitstakes.app.data.model.Habit
+import com.habitstakes.app.data.model.HabitWithStats
+import com.habitstakes.app.data.model.StakeType
 
 @Composable
 fun StakeStatusChip(
@@ -81,9 +87,10 @@ fun StakeStatusChip(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitCard(
-    habit: com.habitstakes.app.data.model.HabitWithStats,
+    habit: HabitWithStats,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -121,7 +128,7 @@ fun HabitCard(
                         text = habitModel.title,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1,
-                        overflow = androidx.compose.ui.text.TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis
                     )
                     if (habitModel.description.isNotBlank()) {
                         Text(
@@ -129,7 +136,7 @@ fun HabitCard(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            overflow = androidx.compose.ui.text.TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -139,7 +146,7 @@ fun HabitCard(
                 )
             }
 
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Stats row
             Row(
@@ -166,7 +173,7 @@ fun HabitCard(
                 )
             }
 
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Bottom info
             Row(
@@ -208,7 +215,7 @@ private fun StatPill(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(imageVector = icon, contentDescription = null, tint = color, modifier = Modifier.size(18.dp))
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(text = value, style = MaterialTheme.typography.titleSmall, color = color, fontWeight = FontWeight.Bold)
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = color.copy(alpha = 0.7f))
     }
@@ -226,30 +233,30 @@ private fun statusColors(status: StakeStatus): StatusColors = when (status) {
 }
 
 private fun statusIcon(status: StakeStatus) = when (status) {
-    StakeStatus.PENDING -> Icons.Default.HelpCircle
+    StakeStatus.PENDING -> Icons.Default.Info
     StakeStatus.HELD -> Icons.Default.Schedule
     StakeStatus.WON -> Icons.Default.CheckCircle
-    StakeStatus.FORFEITED -> Icons.Default.CloseCircle
+    StakeStatus.FORFEITED -> Icons.Default.Cancel
     StakeStatus.REFUNDED -> Icons.Default.Refresh
     StakeStatus.DISPUTED -> Icons.Default.Warning
 }
 
-private fun stakeTypeColor(type: com.habitstakes.app.data.model.StakeType): Color = when (type) {
-    com.habitstakes.app.data.model.StakeType.MONEY -> Color(0xFF10B981)
-    com.habitstakes.app.data.model.StakeType.SOCIAL -> Color(0xFF3B82F6)
-    com.habitstakes.app.data.model.StakeType.TIME -> Color(0xFF8B5CF6)
-    com.habitstakes.app.data.model.StakeType.COMBO -> Color(0xFFEC4899)
+private fun stakeTypeColor(type: StakeType): Color = when (type) {
+    StakeType.MONEY -> Color(0xFF10B981)
+    StakeType.SOCIAL -> Color(0xFF3B82F6)
+    StakeType.TIME -> Color(0xFF8B5CF6)
+    StakeType.COMBO -> Color(0xFFEC4899)
 }
 
-private fun stakeTypeIcon(type: com.habitstakes.app.data.model.StakeType) = when (type) {
-    com.habitstakes.app.data.model.StakeType.MONEY -> Icons.Default.AttachMoney
-    com.habitstakes.app.data.model.StakeType.SOCIAL -> Icons.Default.People
-    com.habitstakes.app.data.model.StakeType.TIME -> Icons.Default.Timer
-    com.habitstakes.app.data.model.StakeType.COMBO -> Icons.Default.AutoAwesome
+private fun stakeTypeIcon(type: StakeType) = when (type) {
+    StakeType.MONEY -> Icons.Default.AttachMoney
+    StakeType.SOCIAL -> Icons.Default.People
+    StakeType.TIME -> Icons.Default.Timer
+    StakeType.COMBO -> Icons.Default.AutoAwesome
 }
 
-private fun formatStake(habit: com.habitstakes.app.data.model.Habit): String = when (habit.stakeType) {
-    com.habitstakes.app.data.model.StakeType.MONEY -> "$${(habit.stakeAmount / 100).toInt()}"
-    com.habitstakes.app.data.model.StakeType.TIME -> "${habit.stakeAmount.toInt()}min"
+private fun formatStake(habit: Habit): String = when (habit.stakeType) {
+    StakeType.MONEY -> "$${(habit.stakeAmount / 100).toInt()}"
+    StakeType.TIME -> "${habit.stakeAmount.toInt()}min"
     else -> habit.stakeType.displayName
 }

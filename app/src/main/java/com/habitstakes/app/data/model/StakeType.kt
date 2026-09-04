@@ -173,3 +173,35 @@ enum class FightStatus(val displayName: String) {
     ENDED("Ended"),
     CANCELLED("Cancelled")
 }
+
+@Serializable
+data class HabitWithStats(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val title: String,
+    val description: String = "",
+    val stakeType: StakeType = StakeType.MONEY,
+    val stakeAmount: Double = 0.0,
+    val currency: String = "USD",
+    val frequency: Frequency = Frequency.DAILY,
+    val reminderTime: String = "07:00",
+    val proofType: ProofType = ProofType.PHOTO,
+    val isActive: Boolean = true,
+    val createdAt: Instant = Instant.now(),
+    val updatedAt: Instant = Instant.now(),
+    val startDate: Instant = Instant.now(),
+    val endDate: Instant? = null,
+    val gracePeriodMinutes: Int = 30,
+    val autoVerify: Boolean = false,
+    val tags: String = "",
+    val lastCompletedAt: Instant? = null,
+    val currentStreak: Int = 0,
+    val longestStreak: Int = 0,
+    val totalCompletions: Int = 0,
+    val totalForfeits: Int = 0,
+    val totalStaked: Double = 0.0,
+    val totalForfeited: Double = 0.0,
+    // Computed stats from joins
+    val verifiedCount: Int = 0,
+    val totalCount: Int = 0
+)
+

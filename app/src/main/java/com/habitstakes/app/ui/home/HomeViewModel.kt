@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.datetime.Instant
 import kotlinx.datetime.Clock
-
 import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 
@@ -67,13 +66,12 @@ class HomeViewModel @Inject constructor(
         loadData()
     }
 
-        fun getTodaysDueHabits(): List<HabitWithStats> {
+    fun getTodaysDueHabits(): List<HabitWithStats> {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val currentTime = "${now.hour.toString().padStart(2, '0')}:${now.minute.toString().padStart(2, '0')}"
         return _habits.value.filter { habit ->
-            habit.isActive && habit.reminderTime <= currentTime
+            habit.habit.isActive && habit.habit.reminderTime <= currentTime
         }
-    }
     }
 }
 

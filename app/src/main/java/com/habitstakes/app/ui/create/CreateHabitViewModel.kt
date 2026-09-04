@@ -10,7 +10,10 @@ import com.habitstakes.app.data.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import javax.inject.Inject
@@ -84,7 +87,7 @@ class CreateHabitViewModel @Inject constructor(
             gracePeriodMinutes = _gracePeriod.value,
             autoVerify = _autoVerify.value,
             tags = _tags.value.trim(),
-            startDate = Instant.now(),
+            startDate = Clock.System.now(),
             endDate = null
         )
         viewModelScope.launch {

@@ -12,9 +12,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.datetime.Instant
-import kotlinx.datetime.format.DateTimeFormatter
+import kotlinx.datetime.Clock
+
 import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 
@@ -38,7 +41,7 @@ class HomeViewModel @Inject constructor(
         HomeUiState(
             habits = habits,
             profile = profile,
-            currentTime = Instant.now()
+            currentTime = Clock.System.now()
         )
     }.stateIn(
         viewModelScope,
@@ -64,20 +67,20 @@ class HomeViewModel @Inject constructor(
         loadData()
     }
 
-    fun getTodaysDueHabits(): List<HabitWithStats> {
-        val now = Instant.now()
-        val formatter = DateTimeFormatter.HH_mm.withZone(TimeZone.currentSystemDefault())
-        val currentTime = formatter.format(now)
+        fun getTodaysDueHabits(): List<HabitWithStats> {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val currentTime = "${now.hour.toString().padStart(2, '0')}:${now.minute.toString().padStart(2, '0')}"
         return _habits.value.filter { habit ->
-            habit.habit.isActive && habit.habit.reminderTime <= currentTime
+            habit.isActive && habit.reminderTime <= currentTime
         }
+    }
     }
 }
 
 data class HomeUiState(
     val habits: List<HabitWithStats> = emptyList(),
     val profile: UserProfile? = null,
-    val currentTime: Instant = Instant.now(),
+    val currentTime: Instant = Clock.System.now(),
     val isLoading: Boolean = false
 ) {
     companion object {

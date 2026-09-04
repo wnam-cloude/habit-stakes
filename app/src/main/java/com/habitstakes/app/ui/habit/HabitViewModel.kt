@@ -16,8 +16,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,7 +85,7 @@ class HabitDetailViewModel @Inject constructor(
                     proofType = proofType,
                     textNote = textNote,
                     verified = habit.autoVerify,
-                    verifiedAt = if (habit.autoVerify) Instant.now() else null,
+                    verifiedAt = if (habit.autoVerify) Clock.System.now() else null,
                     verifiedBy = if (habit.autoVerify) com.habitstakes.app.data.model.VerificationMethod.AUTO else null
                 )
                 val completionId = completionRepository.submitCompletion(completion)
@@ -128,7 +132,7 @@ class HabitDetailViewModel @Inject constructor(
                     isForfeit = true,
                     forfeitReason = reason,
                     verified = true,
-                    verifiedAt = Instant.now(),
+                    verifiedAt = Clock.System.now(),
                     verifiedBy = com.habitstakes.app.data.model.VerificationMethod.AUTO
                 )
                 completionRepository.submitCompletion(completion)

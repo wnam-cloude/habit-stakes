@@ -2,15 +2,12 @@ package com.habitstakes.app.data.db.converters
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.Clock
 
 class DateTimeConverter {
 
     @TypeConverter
     fun fromInstant(value: Instant?): Long? {
-        return value?.epochMilliseconds
+        return value?.epochSeconds?.times(1000)
     }
 
     @TypeConverter

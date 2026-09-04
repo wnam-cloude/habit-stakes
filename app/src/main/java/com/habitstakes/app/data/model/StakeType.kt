@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.habitstakes.app.data.db.converters.DateTimeConverter
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +15,14 @@ enum class StakeType(val displayName: String, val description: String) {
     MONEY("Money Stake", "Pledge real money - forfeited if you fail"),
     SOCIAL("Social Stake", "Public commitment - reputation on the line"),
     TIME("Time Stake", "Lock time - you can't access apps until done"),
-    COMBO("Combo Stake", "Money + Social + Time combined")
+    COMBO("Combo Stake", "Money + Social + Time combined");
+
+    fun defaultDestination(): StakeDestination = when (this) {
+        MONEY -> StakeDestination.PRIZE_POOL
+        SOCIAL -> StakeDestination.CHARITY
+        TIME -> StakeDestination.BURN
+        COMBO -> StakeDestination.PRIZE_POOL
+    }
 }
 
 @Serializable
@@ -30,9 +38,9 @@ data class Habit(
     val reminderTime: String = "07:00", // HH:mm format
     val proofType: ProofType = ProofType.PHOTO,
     val isActive: Boolean = true,
-    val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now(),
-    val startDate: Instant = Instant.now(),
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now(),
+    val startDate: Instant = Clock.System.now(),
     val endDate: Instant? = null,
     val gracePeriodMinutes: Int = 30,
     val autoVerify: Boolean = false,
@@ -81,7 +89,7 @@ data class Completion(
     val verificationScore: Double = 0.0, // 0.0 - 1.0 AI confidence
     val verifiedAt: Instant? = null,
     val verifiedBy: VerificationMethod = VerificationMethod.AUTO,
-    val submittedAt: Instant = Instant.now(),
+    val submittedAt: Instant = Clock.System.now(),
     val isForfeit: Boolean = false,
     val forfeitReason: String? = null
 )
@@ -102,7 +110,7 @@ data class Stake(
     val amount: Double, // in cents for money
     val currency: String = "USD",
     val status: StakeStatus = StakeStatus.PENDING,
-    val createdAt: Instant = Instant.now(),
+    val createdAt: Instant = Clock.System.now(),
     val resolvedAt: Instant? = null,
     val transactionId: String? = null,
     val destination: StakeDestination = StakeDestination.PRIZE_POOL
@@ -144,8 +152,8 @@ data class UserProfile(
     val darkMode: Boolean = false,
     val weeklyReportDay: Int = 7, // Sunday = 7
     val timezone: String = "UTC",
-    val joinedAt: Instant = Instant.now(),
-    val lastActiveAt: Instant = Instant.now()
+    val joinedAt: Instant = Clock.System.now(),
+    val lastActiveAt: Instant = Clock.System.now()
 )
 
 @Serializable
@@ -186,9 +194,9 @@ data class HabitWithStats(
     val reminderTime: String = "07:00",
     val proofType: ProofType = ProofType.PHOTO,
     val isActive: Boolean = true,
-    val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now(),
-    val startDate: Instant = Instant.now(),
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now(),
+    val startDate: Instant = Clock.System.now(),
     val endDate: Instant? = null,
     val gracePeriodMinutes: Int = 30,
     val autoVerify: Boolean = false,

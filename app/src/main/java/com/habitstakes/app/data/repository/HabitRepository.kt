@@ -5,9 +5,9 @@ import com.habitstakes.app.data.db.dao.HabitDao
 import com.habitstakes.app.data.model.Habit
 import com.habitstakes.app.data.model.HabitWithStats
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,10 +33,12 @@ class HabitRepository @Inject constructor(
 
     fun getActiveHabitsWithStats(): Flow<List<HabitWithStats>> = dao.getActiveHabitsWithStats()
 
-    fun getHabitsDueNow(currentTime: String): Flow<List<Habit>> = dao.getHabitsDueNow(currentTime)
+    fun getHabitsDueNow(currentTime: String): Flow<List<Habit>> = flow {
+        emit(dao.getHabitsDueNow(currentTime))
+    }
 
     suspend fun recordCompletion(habitId: Long, stakeAmount: Double) {
-        val now = Instant.now()
+        val now = Clock.System.now()
         dao.recordCompletion(habitId, now, stakeAmount)
     }
 

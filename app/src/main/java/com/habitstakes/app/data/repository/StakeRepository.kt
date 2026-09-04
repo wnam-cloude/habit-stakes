@@ -6,6 +6,7 @@ import com.habitstakes.app.data.model.Stake
 import com.habitstakes.app.data.model.StakeStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +34,7 @@ class StakeRepository @Inject constructor(
         dao.getTotalByHabitAndStatus(habitId, status) ?: 0.0
 
     suspend fun resolveStake(id: Long, newStatus: StakeStatus) = 
-        dao.updateStatus(id, newStatus, Instant.now())
+        dao.updateStatus(id, newStatus, Clock.System.now())
 
     suspend fun getRecentStakes(limit: Int = 50): List<Stake> = dao.getRecent(limit)
 }

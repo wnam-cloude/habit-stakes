@@ -59,7 +59,7 @@ interface HabitDao {
         FROM habits h
         LEFT JOIN (
             SELECT habitId,
-                COUNT(*) FILTER (WHERE verified = 1) as verified_count,
+                SUM(CASE WHEN verified = 1 THEN 1 ELSE 0 END) as verified_count,
                 COUNT(*) as total_count,
                 MAX(submittedAt) as last_completed_at,
                 0 as current_streak,
